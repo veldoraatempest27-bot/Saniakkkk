@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Untukmu 💖</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg1:#2a0a1f;--bg2:#12040e;--heart:#ff4d8d;--glow:#ff1f6b;--text:#ffe3ee;--soft:#ffb3cf}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 20%,var(--bg1),var(--bg2) 70%);color:var(--text);
+font-family:Georgia,'Times New Roman',serif;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden;padding:20px 8px}
+.float{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.float span{position:absolute;bottom:-40px;color:var(--heart);opacity:.25;animation:up linear infinite}
+@keyframes up{to{transform:translateY(-110vh) rotate(25deg);opacity:0}}
+#heart{position:relative;z-index:1;filter:drop-shadow(0 0 8px var(--glow));animation:beat 1.6s ease-in-out infinite;transform-origin:center}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.04)}30%{transform:scale(1)}45%{transform:scale(1.03)}}
+.row{white-space:nowrap;display:flex;justify-content:center;color:var(--heart)}
+.row i{display:inline-block;text-align:center;font-style:normal}
+#msg{position:relative;z-index:1;text-align:center;margin-top:22px;min-height:150px;font-size:clamp(18px,5vw,26px);line-height:1.7;font-style:italic;text-shadow:0 0 12px rgba(255,77,141,.6)}
+#msg div{min-height:1.7em}
+#msg .l2,#msg .l4{color:var(--soft)}
+.cur::after{content:'|';margin-left:2px;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+button{position:relative;z-index:1;margin-top:18px;background:transparent;color:var(--soft);border:1px solid var(--soft);border-radius:999px;padding:9px 22px;font:inherit;font-size:15px;cursor:pointer;opacity:0;transition:opacity .6s}
+button.show{opacity:1}
+@media (prefers-color-scheme:light){:root{--bg1:#2a0a1f;--bg2:#12040e}}
+</style>
+</head>
+<body>
+<div class="float" id="float"></div>
+<div id="heart"></div>
+<div id="msg"><div class="l1"></div><div class="l2"></div><div class="l3"></div><div class="l4"></div></div>
+<button id="again">Ulangi 💞</button>
+<script>
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const heart=document.getElementById('heart');
+const lines=[...document.querySelectorAll('#msg div')];
+const btn=document.getElementById('again');
+let run=0;
+
+// hati melayang di latar
+const fl=document.getElementById('float');
+for(let i=0;i<22;i++){const s=document.createElement('span');s.textContent=['♥','❤','♡'][i%3];
+s.style.left=Math.random()*100+'%';s.style.fontSize=(12+Math.random()*26)+'px';
+s.style.animationDuration=(8+Math.random()*10)+'s';s.style.animationDelay=(-Math.random()*14)+'s';fl.appendChild(s);}
+
+async function ketik(el,teks,jeda=60){
+  el.classList.add('cur');
+  for(const h of teks){el.textContent+=h;await sleep(jeda);}
+  el.classList.remove('cur');
+}
+
+async function main(){
+  const id=++run;
+  btn.classList.remove('show');
+  heart.innerHTML='';lines.forEach(l=>l.textContent='');
+  const cell=Math.min((window.innerWidth*0.94)/60,13);
+  const fs=cell*1.5, rh=cell*1.7;
+  for(let y=12;y>-12;y--){
+    let html='';
+    for(let x=-30;x<30;x++){
+      const a=(x*0.04)**2,b=(y*0.1)**2;
+      const c=(a+b-1)**3-a*(y*0.1)**3;
+      html+='<i style="width:'+cell+'px">'+(c<=0?'♥':'&nbsp;')+'</i>';
+    }
+    const d=document.createElement('div');d.className='row';
+    d.style.fontSize=fs+'px';d.style.height=rh+'px';d.style.lineHeight=rh+'px';d.innerHTML=html;
+    heart.appendChild(d);
+    await sleep(80);if(id!==run)return;
+  }
+  await sleep(400);
+  await ketik(lines[0],'saniak bwa bwa bwa bawa,');if(id!==run)return;
+  await sleep(500);
+  await ketik(lines[1],'blub blub blub blub saniakkk. 🌹');if(id!==run)return;
+  await sleep(500);
+  await ketik(lines[2],'Kw itu blub blub blub,');if(id!==run)return;
+  await ketik(lines[3],'iloveyou. 💫');
+  btn.classList.add('show');
+}
+btn.onclick=main;
+main();
+</script>
+</body>
+</html>
